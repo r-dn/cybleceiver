@@ -22,14 +22,14 @@ This sample shows how to handle flow control in this scenario. It also covers a 
 
 ## Discover Bluetooth Peripherals and Connect to Them
 
-The device running in central mode creates a [`CBCentralManager`](https://developer.apple.com/documentation/corebluetooth/cbcentralmanager), assigning the `CentralViewController` as the manager’s delegate. It calls [`scanForPeripherals`](https://developer.apple.com/documentation/corebluetooth/cbcentralmanager/1518986-scanforperipherals) to discover other Bluetooth devices, passing in the UUID of the service it’s searching for.
+The device running in central mode creates a [`CBCentralManager`](https://developer.apple.com/documentation/corebluetooth/cbcentralmanager), assigning the `CentralViewController` as the manager’s delegate. It calls [`scanForPeripherals`](https://developer.apple.com/documentation/corebluetooth/cbcentralmanager/scanforperipherals(withservices:options:)) to discover other Bluetooth devices, passing in the UUID of the service it’s searching for.
 
 ``` swift
 centralManager.scanForPeripherals(withServices: [TransferService.serviceUUID],
                                    options: [CBCentralManagerScanOptionAllowDuplicatesKey: true])
 ```
 
-When the central manager discovers a peripheral with a matching service UUID, it calls [`centralManager(_:didDiscover:advertisementData:rssi:)`](https://developer.apple.com/documentation/corebluetooth/cbcentralmanagerdelegate/1518937-centralmanager). The sample’s implementation of this method uses the `rssi` (Received Signal Strength Indicator) parameter to determine whether the signal is strong enough to transfer data. RSSI values are provided as negative numbers, with a theortetical maximum of `0`. The sample proceeds with transfer if the `rssi` is greater than or equal to `-50`. If the peripheral’s signal is strong enough, the method saves the peripheral as the property `discoveredPeripheral` and calls [`connect`](https://developer.apple.com/documentation/corebluetooth/cbcentralmanager/1518766-connect) to connect to it.
+When the central manager discovers a peripheral with a matching service UUID, it calls [`centralManager(_:didDiscover:advertisementData:rssi:)`](https://developer.apple.com/documentation/corebluetooth/cbcentralmanagerdelegate/centralmanager(_:diddiscover:advertisementdata:rssi:)). The sample’s implementation of this method uses the `rssi` (Received Signal Strength Indicator) parameter to determine whether the signal is strong enough to transfer data. RSSI values are provided as negative numbers, with a theortetical maximum of `0`. The sample proceeds with transfer if the `rssi` is greater than or equal to `-50`. If the peripheral’s signal is strong enough, the method saves the peripheral as the property `discoveredPeripheral` and calls [`connect`](https://developer.apple.com/documentation/corebluetooth/cbcentralmanager/connect(_:options:)) to connect to it.
 
 ``` swift
 func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral,
@@ -62,7 +62,7 @@ func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPerip
 
 The device running in peripheral mode creates a [`CBPeripheralManager`](https://developer.apple.com/documentation/corebluetooth/cbperipheralmanager) and assigns its `PeripheralViewController` as the manager’s delegate.
 
-When the [`peripheralManagerDidUpdateState`](https://developer.apple.com/documentation/corebluetooth/cbperipheralmanagerdelegate/1393271-peripheralmanagerdidupdatestate) method indicates that Bluetooth has powered on, the sample calls a private `setupPeripheral()` method to create a [`CBMutableCharacteristic`](https://developer.apple.com/documentation/corebluetooth/cbmutablecharacteristic) called `transferCharacteristic`. It then creates a [`CBMutableService`](https://developer.apple.com/documentation/corebluetooth/cbmutableservice) from the characteristic and adds the service to the [`CBPeripheralManager`](https://developer.apple.com/documentation/corebluetooth/cbperipheralmanager).
+When the [`peripheralManagerDidUpdateState`](https://developer.apple.com/documentation/corebluetooth/cbperipheralmanagerdelegate/peripheralmanagerdidupdatestate(_:)) method indicates that Bluetooth has powered on, the sample calls a private `setupPeripheral()` method to create a [`CBMutableCharacteristic`](https://developer.apple.com/documentation/corebluetooth/cbmutablecharacteristic) called `transferCharacteristic`. It then creates a [`CBMutableService`](https://developer.apple.com/documentation/corebluetooth/cbmutableservice) from the characteristic and adds the service to the [`CBPeripheralManager`](https://developer.apple.com/documentation/corebluetooth/cbperipheralmanager).
 
 ``` swift
 private func setupPeripheral() {
@@ -107,10 +107,10 @@ Once the central device discovers and connects to the peripheral, the peripheral
 
 ## When the Central Receives the Data, Update the User Interface
 
-Back on the central device, a call to the central manager delegate’s [`peripheral(_:didDiscoverCharacteristicsFor:Error:`](https://developer.apple.com/documentation/corebluetooth/cbperipheraldelegate/1518821-peripheral) tells the app that it has discovered the peripheral’s transfer characteristic. The sample’s implementation of this method calls [`setNotifyValue(_:for:)`](https://developer.apple.com/documentation/corebluetooth/cbperipheral/1518949-setnotifyvalue) to start receiving updates to the characteristic’s value.
+Back on the central device, a call to the central manager delegate’s [`peripheral(_:didDiscoverCharacteristicsFor:Error:`](https://developer.apple.com/documentation/corebluetooth/cbperipheraldelegate/peripheral(_:diddiscovercharacteristicsfor:error:)) tells the app that it has discovered the peripheral’s transfer characteristic. The sample’s implementation of this method calls [`setNotifyValue(_:for:)`](https://developer.apple.com/documentation/corebluetooth/cbperipheral/setnotifyvalue(_:for:)) to start receiving updates to the characteristic’s value.
 
 When the value does update — meaning text is available — the central manager calls the delegate method
-[`peripheral(_:didUpdateValueFor:error)`](https://developer.apple.com/documentation/corebluetooth/cbperipheraldelegate/1518708-peripheral). The sample looks to see if the data is a chunk or an end-of-message marker. If the data is a chunk, the code appends the chunk to an internal buffer containing the peripheral’s message. If the data is an end-of-message marker, it converts the buffer to a string and sets it as the contents of the text field.
+[`peripheral(_:didUpdateValueFor:error)`](https://developer.apple.com/documentation/corebluetooth/cbperipheraldelegate/peripheral(_:didupdatevaluefor:error:)-1xyna). The sample looks to see if the data is a chunk or an end-of-message marker. If the data is a chunk, the code appends the chunk to an internal buffer containing the peripheral’s message. If the data is an end-of-message marker, it converts the buffer to a string and sets it as the contents of the text field.
 
 ``` swift
 func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {

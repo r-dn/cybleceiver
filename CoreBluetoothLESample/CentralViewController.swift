@@ -1,5 +1,5 @@
 /*
-See LICENSE folder for this sample’s licensing information.
+See the LICENSE.txt file for this sample’s licensing information.
 
 Abstract:
 A class to discover, connect, receive notifications and write data to peripherals by using a transfer service and characteristic.
@@ -101,7 +101,7 @@ class CentralViewController: UIViewController {
         // check to see if number of iterations completed and peripheral can accept more data
         while writeIterationsComplete < defaultIterations && discoveredPeripheral.canSendWriteWithoutResponse {
                     
-            let mtu = discoveredPeripheral.maximumWriteValueLength (for: .withoutResponse)
+            let mtu = discoveredPeripheral.maximumWriteValueLength(for: .withoutResponse)
             var rawPacket = [UInt8]()
             
             let bytesToCopy: size_t = min(mtu, data.count)

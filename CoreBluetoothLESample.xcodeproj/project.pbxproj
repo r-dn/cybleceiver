@@ -85,7 +85,7 @@
 				53F76A1B5D2A119C156B3CA9 /* LICENSE.txt */,
 			);
 			name = LICENSE;
-			path = LICENSE;
+			path = .;
 			sourceTree = "<group>";
 		};
 		A9FCEFA62293634C008CC0CF /* Frameworks */ = {
@@ -329,7 +329,7 @@
 			baseConfigurationReference = 940DB595832554E780C12D56 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = CoreBluetoothLESample/Info.plist;
@@ -351,7 +351,7 @@
 			baseConfigurationReference = 940DB595832554E780C12D56 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = CoreBluetoothLESample/Info.plist;
