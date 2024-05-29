@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,9 +12,11 @@
 		012C306F226FD13B00BADEF9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 012C306E226FD13B00BADEF9 /* Assets.xcassets */; };
 		012C3072226FD13B00BADEF9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 012C3070226FD13B00BADEF9 /* LaunchScreen.storyboard */; };
 		012C307A226FD27600BADEF9 /* CentralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012C3079226FD27600BADEF9 /* CentralViewController.swift */; };
-		012C307C226FD28C00BADEF9 /* PeripheralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012C307B226FD28C00BADEF9 /* PeripheralViewController.swift */; };
 		012C307E226FD59500BADEF9 /* TransferService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012C307D226FD59500BADEF9 /* TransferService.swift */; };
 		A9A7C756227E1D6200F2CC59 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A9A7C755227E1D6200F2CC59 /* README.md */; };
+		AE411B002C078EF300F7E570 /* Playback.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE411AFF2C078EF300F7E570 /* Playback.swift */; };
+		AE9682B32C03F436007CFBD7 /* Clc3 in Frameworks */ = {isa = PBXBuildFile; productRef = AE9682B22C03F436007CFBD7 /* Clc3 */; };
+		AE9682B52C03F475007CFBD7 /* Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9682B42C03F474007CFBD7 /* Decoding.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,12 +27,12 @@
 		012C3071226FD13B00BADEF9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		012C3073226FD13B00BADEF9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		012C3079226FD27600BADEF9 /* CentralViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentralViewController.swift; sourceTree = "<group>"; };
-		012C307B226FD28C00BADEF9 /* PeripheralViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeripheralViewController.swift; sourceTree = "<group>"; };
 		012C307D226FD59500BADEF9 /* TransferService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferService.swift; sourceTree = "<group>"; };
-		53F76A1B5D2A119C156B3CA9 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.txt; sourceTree = "<group>"; };
-		940DB595832554E780C12D56 /* SampleCode.xcconfig */ = {isa = PBXFileReference; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
+		53F76A1B5D2A119C156B3CA9 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		940DB595832554E780C12D56 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 		A9A7C755227E1D6200F2CC59 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		A9FCEFA72293634C008CC0CF /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		AE411AFF2C078EF300F7E570 /* Playback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Playback.swift; sourceTree = "<group>"; };
+		AE9682B42C03F474007CFBD7 /* Decoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decoding.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE9682B32C03F436007CFBD7 /* Clc3 in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,7 +73,8 @@
 				012C3067226FD13B00BADEF9 /* AppDelegate.swift */,
 				012C307D226FD59500BADEF9 /* TransferService.swift */,
 				012C3079226FD27600BADEF9 /* CentralViewController.swift */,
-				012C307B226FD28C00BADEF9 /* PeripheralViewController.swift */,
+				AE9682B42C03F474007CFBD7 /* Decoding.swift */,
+				AE411AFF2C078EF300F7E570 /* Playback.swift */,
 				012C306B226FD13B00BADEF9 /* Main.storyboard */,
 				012C306E226FD13B00BADEF9 /* Assets.xcassets */,
 				012C3070226FD13B00BADEF9 /* LaunchScreen.storyboard */,
@@ -91,7 +95,6 @@
 		A9FCEFA62293634C008CC0CF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A9FCEFA72293634C008CC0CF /* MapKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -120,6 +123,9 @@
 			dependencies = (
 			);
 			name = CoreBluetoothLESample;
+			packageProductDependencies = (
+				AE9682B22C03F436007CFBD7 /* Clc3 */,
+			);
 			productName = BTLETransfer;
 			productReference = 012C3064226FD13B00BADEF9 /* CoreBluetoothLESample.app */;
 			productType = "com.apple.product-type.application";
@@ -149,6 +155,9 @@
 				Base,
 			);
 			mainGroup = 012C305B226FD13B00BADEF9;
+			packageReferences = (
+				AE9682B12C03F436007CFBD7 /* XCLocalSwiftPackageReference "../../Developer/Xcode scraps/lc3_swift" */,
+			);
 			productRefGroup = 012C3065226FD13B00BADEF9 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -177,10 +186,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE411B002C078EF300F7E570 /* Playback.swift in Sources */,
 				012C307E226FD59500BADEF9 /* TransferService.swift in Sources */,
 				012C307A226FD27600BADEF9 /* CentralViewController.swift in Sources */,
+				AE9682B52C03F475007CFBD7 /* Decoding.swift in Sources */,
 				012C3068226FD13B00BADEF9 /* AppDelegate.swift in Sources */,
-				012C307C226FD28C00BADEF9 /* PeripheralViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -331,14 +341,15 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 3XUNMLGB49;
 				INFOPLIST_FILE = CoreBluetoothLESample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				INFOPLIST_KEY_CFBundleDisplayName = Cybleceiver;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.CoreBluetoothLESample${SAMPLE_CODE_DISAMBIGUATOR}";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.AVEchoTouch3XUNMLGB49";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -353,14 +364,15 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 3XUNMLGB49;
 				INFOPLIST_FILE = CoreBluetoothLESample/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				INFOPLIST_KEY_CFBundleDisplayName = Cybleceiver;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.CoreBluetoothLESample${SAMPLE_CODE_DISAMBIGUATOR}";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.AVEchoTouch3XUNMLGB49";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -390,6 +402,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		AE9682B12C03F436007CFBD7 /* XCLocalSwiftPackageReference "../../Developer/Xcode scraps/lc3_swift" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../Developer/Xcode scraps/lc3_swift";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AE9682B22C03F436007CFBD7 /* Clc3 */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Clc3;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 012C305C226FD13B00BADEF9 /* Project object */;
 }
