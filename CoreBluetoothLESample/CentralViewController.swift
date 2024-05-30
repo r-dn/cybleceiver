@@ -10,7 +10,6 @@ import CoreBluetooth
 import os
 import AVFAudio
 
-
 class CentralViewController: UIViewController {
 	
 	enum State {
@@ -23,15 +22,16 @@ class CentralViewController: UIViewController {
 	
 	var centralManager: CBCentralManager!
 	var audioEngine: AVAudioEngine?
-	var playerNode: AVAudioPlayerNode?
-	let format = AVAudioFormat(standardFormatWithSampleRate: 48000, channels: 1)!
+	//	var playerNode: AVAudioPlayerNode?
+	let format = AVAudioFormat(standardFormatWithSampleRate: 48000, channels: 2)!
 	
 	var discoveredPeripheral: CBPeripheral?
 	var transferCharacteristic: CBCharacteristic?
 	
 	var decoder: Decoder?
-	var frameBuffer: [DecodedFrame] = []
-	var pcmAudioBuffers: [AVAudioPCMBuffer] = []
+	var samples: [Int16] = []
+	var decodedFrames: [DecodedFrame] = []
+	var lock = NSLock()
 	
 	var currMsgID: UInt8 = 0
 	var currTime: Date = .now
@@ -51,8 +51,6 @@ class CentralViewController: UIViewController {
 				display("Reconnecting...")
 				
 				audioEngine?.stop()
-				playerNode?.reset()
-				frameBuffer.removeAll()
 				
 			case .connected:
 				DispatchQueue.main.async() {
@@ -61,26 +59,24 @@ class CentralViewController: UIViewController {
 				}
 				
 				audioEngine?.stop()
-				playerNode?.reset()
-				frameBuffer.removeAll()
 				
 			case .streaming:
 				currMsgID = 0
 				currTime = .now
 				startTime = .now
 				totalPacketsReceived = 0
+				samples = [Int16](repeating: 0, count: 480*40)
 				DispatchQueue.main.async() {
 					self.button.setTitle("Stop streaming", for: .normal)
 				}
 				display("Streaming...")
 				
-				do {
-					try audioEngine!.start()
-					playerNode!.play(at: AVAudioTime(hostTime: AVAudioTime.hostTime(forSeconds: 0.1)))
-				} catch {
-					display(error.localizedDescription)
-				}
-					
+				
+					do {
+						try self.audioEngine!.start()
+					} catch {
+						print(error.localizedDescription)
+					}
 			}
 		}
 	}
@@ -97,13 +93,51 @@ class CentralViewController: UIViewController {
 		textView.textContainerInset = .zero
 		textView.textContainer.lineFragmentPadding = 0
 		
+		do {
+			try AVAudioSession.sharedInstance().setPreferredSampleRate(48000)
+			try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+			try AVAudioSession.sharedInstance().setActive(true)
+		} catch {
+			os_log("error changing audiosession")
+		}
+		
+		let sourceNode = AVAudioSourceNode(format: format) { [self]
+			(silence, timeStamp, frameCount, audioBufferList) ->
+			OSStatus in
+			
+			let storage = UnsafeMutablePointer<Int16>.allocate(capacity: Int(frameCount))
+			storage.initialize(from: samples, count: Int(frameCount))
+			let sampleData = Data(bytes: storage, count: Int(frameCount))
+			storage.deallocate()
+			
+			let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
+			
+			sampleData.withUnsafeBytes { (samplePtr: UnsafePointer<Int16>) in
+				for frame in 0..<Int(frameCount) {
+					let value = samplePtr[frame]
+					for buffer in ablPointer {
+						let buf: UnsafeMutableBufferPointer<Int16> = UnsafeMutableBufferPointer(buffer)
+						buf[frame] = value
+					}
+				}
+			}
+			lock.lock()
+			samples.removeFirst(Int(frameCount))
+			lock.unlock()
+			return noErr
+		}
+		
 		audioEngine = AVAudioEngine()
-		playerNode = AVAudioPlayerNode()
-		audioEngine?.attach(playerNode!)
-		let format = audioEngine!.mainMixerNode.outputFormat(forBus: 0)
-		audioEngine!.connect(playerNode!, to: audioEngine!.mainMixerNode, format: format)
+		audioEngine!.attach(sourceNode)
+		let outputFormat = audioEngine!.mainMixerNode.outputFormat(forBus: 0)
+		audioEngine!.connect(sourceNode, to: audioEngine!.mainMixerNode, format: outputFormat)
+		do {
+//			try audioEngine!.enableManualRenderingMode(.realtime, format: format, maximumFrameCount: 480)
+		} catch {
+			print(error.localizedDescription)
+		}
+		audioEngine!.mainMixerNode.outputVolume = 0.5
 		audioEngine!.prepare()
-//		playerNode!.prepare(withFrameCount: 480)
 		
 		display("Connecting...")
 		
@@ -346,7 +380,7 @@ extension CentralViewController: CBPeripheralDelegate {
 		
 		guard let characteristicData = characteristic.value else { return }
 		
-//		os_log("Received %d bytes", characteristicData.count)
+		//		os_log("Received %d bytes", characteristicData.count)
 		
 		
 		// End-of-message case: show the data.
@@ -371,17 +405,18 @@ extension CentralViewController: CBPeripheralDelegate {
 		let encodedFrame = EncodedFrame(data: dataArray.dropLast())
 		
 		do {
-			var decodedFrame = try encodedFrame.decode(decoder: self.decoder!)
-			frameBuffer.append(decodedFrame)
+			let decodedFrame = try encodedFrame.decode(decoder: self.decoder!)
+			decodedFrames.append(decodedFrame)
 			
-			decodedFrame.samples.withUnsafeMutableBufferPointer { umrbp in
-				let audioBuffer = AudioBuffer(mNumberChannels: 1, mDataByteSize: UInt32(umrbp.count * MemoryLayout<Float>.size), mData: umrbp.baseAddress)
-				var bufferList = AudioBufferList(mNumberBuffers: 1, mBuffers: audioBuffer)
-				let outputAudioBuffer = AVAudioPCMBuffer(pcmFormat: format, bufferListNoCopy: &bufferList)!
-				pcmAudioBuffers.append(outputAudioBuffer)
-				playerNode!.scheduleBuffer(outputAudioBuffer)
+			if decodedFrames.count == 10 {
+				let bigFrame = decodedFrames.reduce([Int16]()) {
+					$0 + $1.samples
+				}
+				
+				lock.lock()
+				samples += bigFrame
+				lock.unlock()
 			}
-			
 		} catch {
 			os_log("error decoding")
 		}

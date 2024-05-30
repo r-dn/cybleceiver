@@ -28,6 +28,8 @@
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>We use bluetooth to demonstrate fundamental CoreBluetooth functionality</string>
+	<key>UIBackgroundModes</key>
+	<array/>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
