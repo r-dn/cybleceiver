@@ -14,7 +14,7 @@
 		012C307A226FD27600BADEF9 /* CentralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012C3079226FD27600BADEF9 /* CentralViewController.swift */; };
 		012C307E226FD59500BADEF9 /* TransferService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012C307D226FD59500BADEF9 /* TransferService.swift */; };
 		A9A7C756227E1D6200F2CC59 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A9A7C755227E1D6200F2CC59 /* README.md */; };
-		AE411B002C078EF300F7E570 /* Playback.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE411AFF2C078EF300F7E570 /* Playback.swift */; };
+		AE411B002C078EF300F7E570 /* WAV.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE411AFF2C078EF300F7E570 /* WAV.swift */; };
 		AE9682B32C03F436007CFBD7 /* Clc3 in Frameworks */ = {isa = PBXBuildFile; productRef = AE9682B22C03F436007CFBD7 /* Clc3 */; };
 		AE9682B52C03F475007CFBD7 /* Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9682B42C03F474007CFBD7 /* Decoding.swift */; };
 /* End PBXBuildFile section */
@@ -31,7 +31,7 @@
 		53F76A1B5D2A119C156B3CA9 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		940DB595832554E780C12D56 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 		A9A7C755227E1D6200F2CC59 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		AE411AFF2C078EF300F7E570 /* Playback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Playback.swift; sourceTree = "<group>"; };
+		AE411AFF2C078EF300F7E570 /* WAV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WAV.swift; sourceTree = "<group>"; };
 		AE9682B42C03F474007CFBD7 /* Decoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decoding.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -74,7 +74,7 @@
 				012C307D226FD59500BADEF9 /* TransferService.swift */,
 				012C3079226FD27600BADEF9 /* CentralViewController.swift */,
 				AE9682B42C03F474007CFBD7 /* Decoding.swift */,
-				AE411AFF2C078EF300F7E570 /* Playback.swift */,
+				AE411AFF2C078EF300F7E570 /* WAV.swift */,
 				012C306B226FD13B00BADEF9 /* Main.storyboard */,
 				012C306E226FD13B00BADEF9 /* Assets.xcassets */,
 				012C3070226FD13B00BADEF9 /* LaunchScreen.storyboard */,
@@ -187,7 +187,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AE411B002C078EF300F7E570 /* Playback.swift in Sources */,
+				AE411B002C078EF300F7E570 /* WAV.swift in Sources */,
 				012C307E226FD59500BADEF9 /* TransferService.swift in Sources */,
 				012C307A226FD27600BADEF9 /* CentralViewController.swift in Sources */,
 				AE9682B52C03F475007CFBD7 /* Decoding.swift in Sources */,
@@ -278,6 +278,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 			};
 			name = Debug;
 		};
@@ -335,6 +336,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -350,7 +352,7 @@
 				DEVELOPMENT_TEAM = 3XUNMLGB49;
 				INFOPLIST_FILE = CoreBluetoothLESample/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Cybleceiver;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -358,7 +360,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.AVEchoTouch3XUNMLGB49";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "CoreBluetoothLESample/CoreBluetoothLESample-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -376,7 +378,7 @@
 				DEVELOPMENT_TEAM = 3XUNMLGB49;
 				INFOPLIST_FILE = CoreBluetoothLESample/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Cybleceiver;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -384,7 +386,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.AVEchoTouch3XUNMLGB49";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "CoreBluetoothLESample/CoreBluetoothLESample-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

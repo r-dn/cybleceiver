@@ -21,23 +21,18 @@ class CentralViewController: UIViewController {
 	@IBOutlet var avgLabel: UILabel!
 	
 	var centralManager: CBCentralManager!
-	var audioEngine: AVAudioEngine?
-	//	var playerNode: AVAudioPlayerNode?
-	let format = AVAudioFormat(standardFormatWithSampleRate: 48000, channels: 2)!
+	
+	var fileURL: URL = URL.documentsDirectory.appending(path: "output.wav")
 	
 	var discoveredPeripheral: CBPeripheral?
 	var transferCharacteristic: CBCharacteristic?
 	
 	var decoder: Decoder?
 	var samples: [Int16] = []
-	var decodedFrames: [DecodedFrame] = []
-	var lock = NSLock()
 	
 	var currMsgID: UInt8 = 0
 	var currTime: Date = .now
-	var startTime: Date = .now
-	var totalPacketsReceived = 0
-	var rxTimes = [Double](repeating: 0, count: 256)
+	var rxTimes = [Double](repeating: 0, count: 64)
 	
 	var state: State = .disconnected {
 		didSet {
@@ -50,33 +45,22 @@ class CentralViewController: UIViewController {
 				display("Disconnected from audio_cyble")
 				display("Reconnecting...")
 				
-				audioEngine?.stop()
-				
 			case .connected:
 				DispatchQueue.main.async() {
 					self.button.isEnabled = true
 					self.button.setTitle("Start streaming", for: .normal)
 				}
 				
-				audioEngine?.stop()
-				
 			case .streaming:
 				currMsgID = 0
 				currTime = .now
-				startTime = .now
-				totalPacketsReceived = 0
-				samples = [Int16](repeating: 0, count: 480*40)
+				samples = []
+				let dateString = currTime.description(with: nil)
+				fileURL = URL.documentsDirectory.appending(path: "\(dateString).wav")
 				DispatchQueue.main.async() {
 					self.button.setTitle("Stop streaming", for: .normal)
 				}
 				display("Streaming...")
-				
-				
-					do {
-						try self.audioEngine!.start()
-					} catch {
-						print(error.localizedDescription)
-					}
 			}
 		}
 	}
@@ -92,52 +76,6 @@ class CentralViewController: UIViewController {
 		avgLabel.font = UIFont.monospacedDigitSystemFont(ofSize: avgLabel.font.pointSize, weight: .regular)
 		textView.textContainerInset = .zero
 		textView.textContainer.lineFragmentPadding = 0
-		
-		do {
-			try AVAudioSession.sharedInstance().setPreferredSampleRate(48000)
-			try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
-			try AVAudioSession.sharedInstance().setActive(true)
-		} catch {
-			os_log("error changing audiosession")
-		}
-		
-		let sourceNode = AVAudioSourceNode(format: format) { [self]
-			(silence, timeStamp, frameCount, audioBufferList) ->
-			OSStatus in
-			
-			let storage = UnsafeMutablePointer<Int16>.allocate(capacity: Int(frameCount))
-			storage.initialize(from: samples, count: Int(frameCount))
-			let sampleData = Data(bytes: storage, count: Int(frameCount))
-			storage.deallocate()
-			
-			let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
-			
-			sampleData.withUnsafeBytes { (samplePtr: UnsafePointer<Int16>) in
-				for frame in 0..<Int(frameCount) {
-					let value = samplePtr[frame]
-					for buffer in ablPointer {
-						let buf: UnsafeMutableBufferPointer<Int16> = UnsafeMutableBufferPointer(buffer)
-						buf[frame] = value
-					}
-				}
-			}
-			lock.lock()
-			samples.removeFirst(Int(frameCount))
-			lock.unlock()
-			return noErr
-		}
-		
-		audioEngine = AVAudioEngine()
-		audioEngine!.attach(sourceNode)
-		let outputFormat = audioEngine!.mainMixerNode.outputFormat(forBus: 0)
-		audioEngine!.connect(sourceNode, to: audioEngine!.mainMixerNode, format: outputFormat)
-		do {
-//			try audioEngine!.enableManualRenderingMode(.realtime, format: format, maximumFrameCount: 480)
-		} catch {
-			print(error.localizedDescription)
-		}
-		audioEngine!.mainMixerNode.outputVolume = 0.5
-		audioEngine!.prepare()
 		
 		display("Connecting...")
 		
@@ -389,40 +327,32 @@ extension CentralViewController: CBPeripheralDelegate {
 		
 		// Otherwise, just append the data to what we have previously received.
 		let dataArray = [UInt8](characteristicData)
-		let receivedMsgID = dataArray.last!
+		let receivedMsgID = dataArray[160]
+		let received_freq = Data(dataArray.dropFirst(161)).withUnsafeBytes { $0.load(as: Float.self) }
+		print(received_freq)
 		
-		guard receivedMsgID == currMsgID else {
+		if receivedMsgID != currMsgID
+		{
 			display("A packet got dropped")
-			return
+			currMsgID = receivedMsgID
 		}
 		let newCurrTime = Date.now
-		rxTimes[Int(currMsgID)] = newCurrTime.timeIntervalSince(currTime)
+		rxTimes[Int(currMsgID % 64)] = newCurrTime.timeIntervalSince(currTime)
 		
 		currTime = newCurrTime
 		currMsgID = currMsgID &+ 1
-		totalPacketsReceived += 1
 		
-		let encodedFrame = EncodedFrame(data: dataArray.dropLast())
+		let encodedFrame = EncodedFrame(data: dataArray.dropLast(5))
 		
 		do {
 			let decodedFrame = try encodedFrame.decode(decoder: self.decoder!)
-			decodedFrames.append(decodedFrame)
-			
-			if decodedFrames.count == 10 {
-				let bigFrame = decodedFrames.reduce([Int16]()) {
-					$0 + $1.samples
-				}
-				
-				lock.lock()
-				samples += bigFrame
-				lock.unlock()
-			}
+			samples += decodedFrame.samples
 		} catch {
 			os_log("error decoding")
 		}
 		
 		if currMsgID % 64 == 0 {
-			let avgTimePerPacket = rxTimes.reduce(0, +)/256
+			let avgTimePerPacket = rxTimes.reduce(0, +)/64
 			
 			DispatchQueue.main.async() {
 				self.avgLabel.text = "\(String(format: "%.2f", avgTimePerPacket * 1000)) ms per packet"
@@ -469,6 +399,22 @@ extension CentralViewController {
 			state = .streaming
 		case .streaming:
 			// TODO: stop streaming
+			
+			display("Writing to \"\(fileURL.lastPathComponent)\"...")
+			
+			// fade out in the last frame
+			for i in 0..<240 {
+				let multiplier = Double(i)/240
+				samples[samples.count - i - 1] = Int16(Double(samples[samples.count - i - 1]) * multiplier)
+			}
+			
+			// skip first 120 samples (2.5 ms) -> codec latency
+			let samplesSkip = samples.dropFirst(120)
+			writeWAVFile(samples: samplesSkip, sampleRate: 48000, fileURL: fileURL)
+			state = .connected
+			
+			
+			
 			break
 		}
 	}
